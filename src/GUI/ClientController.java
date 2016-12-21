@@ -79,8 +79,8 @@ public class ClientController {
     @FXML
     void sendAction(ActionEvent event) {
     	print("> " + inputTextArea.getText());
-    	System.out.print(inputTextArea.getText());
     	communicationController.getClient().send(inputTextArea.getText());
+    	communicationController.getClient().receive();
     	inputTextArea.clear();
     }
     

@@ -2,86 +2,96 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 import controller.CommunicationController;
 
 public class Client {
-	private Socket socket;
-	private OutputStream out;
-	private OutputStreamWriter osw;
-	private InputStream in;
-	private PrintStream ps;
+	private Socket clientSocket = null;
+	private PrintWriter out = null;
+	private BufferedReader in = null;
 	
 	private CommunicationController communicationController;
 	
 	public Client() {
-		this.socket = new Socket();
+		this.clientSocket = new Socket();
 	}
 	
 	public void connect(String host, int port) {
 		try {
-			this.socket = new Socket(host, port);
-			this.out = socket.getOutputStream();
-			this.in = socket.getInputStream();
-			this.ps = new PrintStream(out, true);
-			this.osw = new OutputStreamWriter(out, "UTF-8");
+			clientSocket.connect(new InetSocketAddress(host, port));
+			receive();
 		} catch (UnknownHostException e) { 
-            System.out.println("Unknown Host..."); 
+			communicationController.getClientController().update(
+					"# Don't know about host: " + host); 
             e.printStackTrace(); 
         } catch (IOException e) { 
-            System.out.println("IOProbleme..."); 
+        	communicationController.getClientController().update(
+        			"# Couldn't get I/O for the connection to: " + host); 
             e.printStackTrace(); 
-//        } finally { 
-//            if (socket != null) 
-//                try { 
-//                    socket.close(); 
-//                    System.out.println("Socket geschlossen..."); 
-//                } catch (IOException e) { 
-//                    System.out.println("Socket nicht zu schliessen..."); 
-//                    e.printStackTrace(); 
-//                } 
         } 
 	}
 	
 	public boolean isConnected() {
-		return socket.isConnected();
+		return clientSocket.isConnected();
 	}
 	
 	public void send(String str) {
-		//ps.println(str);
-		try {
-			osw.write(str);
-			receive();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(clientSocket != null) {
+			try {
+				out = new PrintWriter(clientSocket.getOutputStream(), true);
+				Scanner scanner = new Scanner(str);
+				while(scanner.hasNextLine()) {
+					out.println(scanner.nextLine());
+				}
+				scanner.close();
+			} catch (IOException e) { 
+	            communicationController.getClientController().update(
+	            		"# Couldn't get I/O for the connection to: " + clientSocket.getInetAddress()); 
+	            e.printStackTrace(); 
+	        } finally {
+				out.close();
+	        }
 		}
 	}
 	
-	public void receive() throws IOException {
-		 BufferedReader buff = new BufferedReader(new InputStreamReader(in)); 
-         String text = "";
-         
-         while (buff.ready()) { 
-             text = text + "\n" + buff.readLine(); 
-         }
-         communicationController.getClientController().update(text);
+	public void receive() {
+		String line = null;
+		if(clientSocket != null) {
+			try {
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); 
+				while((line = in.readLine()) != null) {
+					communicationController.getClientController().update(line);
+				}
+			} catch (IOException e) { 
+				communicationController.getClientController().update(
+						"# Couldn't get I/O for the connection to: " + clientSocket.getInetAddress()); 
+	            e.printStackTrace(); 
+	        } finally {
+	        	try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+		}
 	}
 	
 	public void close() {
-		if (socket != null) {
+		if (clientSocket != null) {
 			try {
-				socket.close();
-				System.out.println("Socket geschlossen..."); 
+				clientSocket.close();
+				communicationController.getClientController().update(
+						"# Socket geschlossen..."); 
 			} catch (IOException e) { 
-				System.out.println("Socket nicht zu schliessen..."); 
+				communicationController.getClientController().update(
+						"# Socket nicht zu schliessen..."); 
               	e.printStackTrace(); 
 			} 
 		}
