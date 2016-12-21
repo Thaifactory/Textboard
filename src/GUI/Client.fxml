@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ClientController">
    <children>
       <VBox prefHeight="687.0" prefWidth="908.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -28,7 +28,7 @@
                </VBox.margin>
             </HBox>
             <Separator prefWidth="200.0" />
-            <TextArea fx:id="outputTextArea" disable="true" prefHeight="300.0" wrapText="true" />
+            <TextArea id="outputTextArea" fx:id="outputTextArea" editable="false" prefHeight="300.0" stylesheets="@../application/application.css" wrapText="true" />
             <Separator />
             <VBox>
                <children>
@@ -56,14 +56,14 @@
             </VBox>
             <HBox spacing="10.0">
                <children>
-                  <TextField fx:id="dateTextField" promptText="DD.MM.YYYY hh:mm:ss" />
+                  <TextField fx:id="dateTextField" promptText="dd.MM.yyyy hh:mm:ss" />
                   <Button mnemonicParsing="false" onAction="#convertToTimestampAction" text="Umwandeln und Einfügen" />
                </children>
             </HBox>
             <TextArea fx:id="inputTextArea" onKeyPressed="#keyPressedAction" wrapText="true" />
             <HBox alignment="TOP_RIGHT">
                <children>
-                  <Button fx:id="sendButton" mnemonicParsing="false" text="Senden" />
+                  <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendAction" text="Senden" />
                </children>
             </HBox>
          </children>
