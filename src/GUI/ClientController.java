@@ -78,15 +78,11 @@ public class ClientController {
     
     @FXML
     void sendAction(ActionEvent event) {
-    	if(inputTextArea.getText().isEmpty()) {
-    		communicationController.getClient().receive();
-    	} else {
+//    	if(!inputTextArea.getText().isEmpty()) {
     		print("> " + inputTextArea.getText());
         	communicationController.getClient().send(inputTextArea.getText());
-        	communicationController.getClient().receive();
         	inputTextArea.clear();
-    	}
-    	
+//    	}
     }
     
     public void setCommunicationController(CommunicationController controller) {

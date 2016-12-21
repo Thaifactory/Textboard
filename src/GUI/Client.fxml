@@ -83,7 +83,7 @@
             </VBox>
          </bottom>
          <center>
-            <TextArea id="outputTextArea" fx:id="outputTextArea" editable="false" focusTraversable="false" promptText="Textboard" stylesheets="@../application/application.css" wrapText="true" BorderPane.alignment="CENTER">
+            <TextArea id="outputTextArea" fx:id="outputTextArea" editable="false" focusTraversable="false" stylesheets="@../application/application.css" text="Textboard" wrapText="true" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="10.0" right="10.0" top="5.0" />
                </BorderPane.margin>
