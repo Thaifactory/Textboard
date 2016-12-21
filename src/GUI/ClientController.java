@@ -34,6 +34,7 @@ public class ClientController {
     @FXML
     void initialize() {
     	checkStatus();
+    	sendButton.requestFocus();
     }
     
     @FXML
