@@ -1,12 +1,12 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
-#outputTextArea:disabled {
+/*#outputTextArea:disabled {
 	-fx-text-fill: white;
   	-fx-prompt-text-fill: white;
   	-fx-font-weight: bold;
   	-fx-opacity: 1.0;
   	-fx-background-color: #003366;
   	-fx-control-inner-background: #003366; 
-}
+}*/
 
 #outputTextArea {
 	-fx-text-fill: white;
@@ -20,5 +20,9 @@
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
 	-fx-background-insets: 0, 1, 2;
 	-fx-background-radius: 5, 4, 3;
+}
+
+#outputTextArea .content {
+	-fx-cursor: default;
 }
 
