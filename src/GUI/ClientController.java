@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import com.sun.jmx.snmp.Timestamp;
+
+import controller.CommunicationController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,7 +17,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import model.Client;
 
 public class ClientController {
 
@@ -28,11 +29,11 @@ public class ClientController {
     @FXML private TextArea inputTextArea;
     @FXML private Button sendButton;
     
-    private Client client;
+    private CommunicationController communicationController;
     private boolean connected = false;
 
     @FXML
-    public void initialize() {
+    void initialize() {
     	sendButton.requestFocus();
     	checkStatus();	
     }
@@ -40,17 +41,17 @@ public class ClientController {
     @FXML
     void connectAction(ActionEvent event) {
     	if(connected) {
-    		client.close();
+    		communicationController.getClient().close();
     		connected = false;
     		checkStatus();
     	} else {
     		int port = Integer.parseInt(portTextField.getText());
 
         	print("# Connect Port: " + port);
-        	client = new Client(ipTextField.getText(), port);
+        	communicationController.getClient().connect(ipTextField.getText(), port);
         	
         	try {
-        		connected = client.isConnected();
+        		connected = communicationController.getClient().isConnected();
         	} catch(NullPointerException e) {
         		print("# Socket is closed!");
         		connected = false;
@@ -79,8 +80,12 @@ public class ClientController {
     void sendAction(ActionEvent event) {
     	print("> " + inputTextArea.getText());
     	System.out.print(inputTextArea.getText());
-    	client.send(inputTextArea.getText());
+    	communicationController.getClient().send(inputTextArea.getText());
     	inputTextArea.clear();
+    }
+    
+    public void setCommunicationController(CommunicationController controller) {
+    	this.communicationController = controller;
     }
     
     private void print(String text) {
@@ -113,4 +118,7 @@ public class ClientController {
     	return timestamp.getDateTime();
     }
 
+    public void update(String text) {
+    	print(text);
+    }
 }

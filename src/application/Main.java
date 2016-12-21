@@ -1,5 +1,6 @@
 package application;
 	
+import controller.CommunicationController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -13,6 +14,11 @@ public class Main extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/Client.fxml"));
 			Parent root = loader.load();
+			
+			CommunicationController controller = new CommunicationController(loader.getController());
+			controller.getClient().setController(controller);
+			controller.getClientController().setCommunicationController(controller);
+			
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);

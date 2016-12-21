@@ -10,6 +10,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import controller.CommunicationController;
+
 public class Client {
 	private Socket socket;
 	private OutputStream out;
@@ -17,7 +19,13 @@ public class Client {
 	private InputStream in;
 	private PrintStream ps;
 	
-	public Client(String host, int port) {
+	private CommunicationController communicationController;
+	
+	public Client() {
+		this.socket = new Socket();
+	}
+	
+	public void connect(String host, int port) {
 		try {
 			this.socket = new Socket(host, port);
 			this.out = socket.getOutputStream();
@@ -64,7 +72,7 @@ public class Client {
          while (buff.ready()) { 
              text = text + "\n" + buff.readLine(); 
          }
-         System.out.println(text);
+         communicationController.getClientController().update(text);
 	}
 	
 	public void close() {
@@ -78,5 +86,13 @@ public class Client {
 			} 
 		}
 		
+	}
+
+	public CommunicationController getController() {
+		return communicationController;
+	}
+
+	public void setController(CommunicationController controller) {
+		this.communicationController = controller;
 	}
 }
