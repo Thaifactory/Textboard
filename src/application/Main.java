@@ -11,11 +11,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			//ClientController clientController = new ClientController(primaryStage);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/Client.fxml"));
 			Parent root = loader.load();
 			Scene scene = new Scene(root);
-//			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.sizeToScene();
 			primaryStage.setTitle("Textboard");

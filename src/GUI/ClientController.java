@@ -32,9 +32,9 @@ public class ClientController {
     private boolean connected = false;
 
     @FXML
-    void initialize() {
-    	checkStatus();
+    public void initialize() {
     	sendButton.requestFocus();
+    	checkStatus();	
     }
     
     @FXML
