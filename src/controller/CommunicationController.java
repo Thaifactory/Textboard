@@ -10,7 +10,6 @@ public class CommunicationController {
 	public CommunicationController(ClientController clientController) {
 		this.client = new Client();
 		this.clientController = clientController;
-		System.out.println(clientController.toString());
 	}
 
 	public Client getClient() {

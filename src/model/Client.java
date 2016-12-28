@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-
 import controller.CommunicationController;
 
 public class Client {

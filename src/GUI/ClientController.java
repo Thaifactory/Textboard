@@ -5,9 +5,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Scanner;
+
 import com.sun.jmx.snmp.Timestamp;
 
 import controller.CommunicationController;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -31,11 +35,11 @@ public class ClientController {
     
     private CommunicationController communicationController;
     private boolean connected = false;
-
+    
     @FXML
     void initialize() {
     	sendButton.requestFocus();
-    	checkStatus();	
+    	checkStatus();
     }
     
     @FXML
@@ -72,16 +76,23 @@ public class ClientController {
     @FXML
     void keyPressedAction(KeyEvent event) {
     	if(event.getCode().equals(KeyCode.ENTER)) {
-    		print("\n");
+    		
     	}
     }
     
     @FXML
     void sendAction(ActionEvent event) {
 //    	if(!inputTextArea.getText().isEmpty()) {
-    		print("> " + inputTextArea.getText());
+    		Scanner scn = new Scanner(inputTextArea.getText());
+    		while (scn.hasNextLine()) {
+    			print("> " + scn.nextLine());
+    		}
+    		scn.close();
         	communicationController.getClient().send(inputTextArea.getText());
         	inputTextArea.clear();
+        	inputTextArea.requestFocus();
+        	outputTextArea.setScrollTop(0);
+        	checkStatus();
 //    	}
     }
     
