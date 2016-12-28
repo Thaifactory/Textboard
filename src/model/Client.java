@@ -13,8 +13,6 @@ public class Client {
 	private CommunicationController communicationController;
 
 	private Socket clientSocket = null;
-	private PrintWriter out = null;
-	private BufferedReader in = null;
 
 	public Client() {
 		this.clientSocket = new Socket();
@@ -23,8 +21,7 @@ public class Client {
 	public void connect(String host, int port) {
 		try {
 			clientSocket.connect(new InetSocketAddress(host, port));
-			out = new PrintWriter(clientSocket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			
 		} catch (UnknownHostException e) {
 			communicationController.getClientController().update(
 					"# Don't know about host: " + host);
@@ -41,9 +38,19 @@ public class Client {
 	}
 
 	public void send(String str) {
+		PrintWriter out = null;
+		BufferedReader in = null;
+		try {
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		} catch (IOException e) {
+			communicationController.getClientController().update(
+					"# Couldn't get I/O for the connection" + clientSocket.getInetAddress());
+			e.printStackTrace();
+		}
+		
 		if (clientSocket != null && out != null && in != null) {
 			out.println(str);
-			//out.flush();
 			String responseLine;
 			try {
 				while((responseLine = in.readLine()) != null) {
@@ -51,30 +58,23 @@ public class Client {
 				}
 			} catch (IOException e) {
 				communicationController.getClientController().update(
-						"Couldn't get I/O for the connection to: " + clientSocket.getInetAddress());
+						"# Couldn't get I/O for the connection to: " + clientSocket.getInetAddress());
+	        } finally {
+	        	try {
+					in.close();
+				} catch (IOException e) {
+					communicationController.getClientController().update(
+							"# Couldn't close the Inputstream");
+					e.printStackTrace();
+				}
+	        	out.close();
 	        }
 		}
 	}
 
-	public void receive() {
-		String line = null;
-		if (clientSocket != null && in != null) {
-			try {
-				while ((line = in.readLine()) != null) {
-					communicationController.getClientController().update("< " + line);
-				}
-			} catch (IOException e) {
-				communicationController.getClientController()
-						.update("# Couldn't get I/O for the connection to: " + clientSocket.getInetAddress());
-			}
-		}
-	}
-
 	public void close() {
-		if (clientSocket != null && out != null && in != null) {
+		if (clientSocket != null) {
 			try {
-				in.close();
-				out.close();
 				clientSocket.close();
 				communicationController.getClientController().update("# Socket geschlossen...");
 			} catch (IOException e) {

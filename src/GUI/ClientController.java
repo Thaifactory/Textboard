@@ -10,13 +10,13 @@ import java.util.Scanner;
 import com.sun.jmx.snmp.Timestamp;
 
 import controller.CommunicationController;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -51,7 +51,7 @@ public class ClientController {
     	} else {
     		int port = Integer.parseInt(portTextField.getText());
 
-        	print("# Connect Port: " + port);
+        	print("# Connect to Port: " + port);
         	communicationController.getClient().connect(ipTextField.getText(), port);
         	
         	try {
@@ -60,7 +60,7 @@ public class ClientController {
         		print("# Socket is closed!");
         		connected = false;
         	}
-        	print("# Is connected: " + connected);
+        	print("# Client is connected: " + connected);
         	
         	checkStatus();
         	inputTextArea.requestFocus();
@@ -82,7 +82,7 @@ public class ClientController {
     
     @FXML
     void sendAction(ActionEvent event) {
-//    	if(!inputTextArea.getText().isEmpty()) {
+    	if(!inputTextArea.getText().isEmpty()) {
     		Scanner scn = new Scanner(inputTextArea.getText());
     		while (scn.hasNextLine()) {
     			print("> " + scn.nextLine());
@@ -93,7 +93,11 @@ public class ClientController {
         	inputTextArea.requestFocus();
         	outputTextArea.setScrollTop(0);
         	checkStatus();
-//    	}
+    	} else {
+    		Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setContentText("Bitte geben Sie eine Nachricht in das untere Feld ein.");
+    		alert.setTitle("Keine Nachricht vorhanden!");
+    	}
     }
     
     public void setCommunicationController(CommunicationController controller) {
