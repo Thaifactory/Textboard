@@ -15,6 +15,7 @@ public class Client {
 	private PrintWriter out = null;
 	private BufferedReader in = null;
 	private Listener socketListener;
+	private int numberOfListener = 0;
 
 	public Client() {
 		this.clientSocket = new Socket();
@@ -25,7 +26,7 @@ public class Client {
 			clientSocket.connect(new InetSocketAddress(host, port));
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			socketListener = new Listener(in);
+			socketListener = new Listener(in, numberOfListener++);
 			socketListener.start();
 		} catch (UnknownHostException e) {
 			communicationController.getClientController().update("# Don't know about host: " + host);
@@ -98,8 +99,9 @@ public class Client {
 		private boolean terminate;
 		private int numberOfListener;
 
-		public Listener(BufferedReader reader) {
+		public Listener(BufferedReader reader, int numberOfListener) {
 			this.in = reader;
+			this.numberOfListener = numberOfListener;
 			terminate = false;
 		}
 
@@ -111,13 +113,15 @@ public class Client {
 
 		@Override
 		public void run() {
-			String responseLine;
+//			String responseLine;
 			while (!terminate) {
 				if (in != null) {
 					try {
-						while ((responseLine = in.readLine()) != null) {
-							communicationController.getClientController().update("< " + responseLine);
-						}
+						communicationController.getClientController().update("< " + in.readLine());
+//						while (in.ready()) {
+//							communicationController.getClientController().update("< " + 
+//									(responseLine = in.readLine()));
+//						}
 					} catch (IOException e) {
 						communicationController.getClientController().update("# Couldn't get Input for the connection");
 						terminate();
