@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import controller.CommunicationController;
+import javafx.application.Platform;
 
 public class Client {
 	private CommunicationController communicationController;
@@ -97,12 +98,11 @@ public class Client {
 	private class Listener extends Thread {
 		private BufferedReader in;
 		private boolean terminate;
-		private int numberOfListener;
 
 		public Listener(BufferedReader reader, int numberOfListener) {
+			setName("Listener " + numberOfListener);
 			this.in = reader;
-			this.numberOfListener = numberOfListener;
-			terminate = false;
+			this.terminate = false;
 		}
 
 		public void terminate() {
@@ -111,19 +111,24 @@ public class Client {
 					+ ".\n Please " + "close the Socket and create a new connection!");
 		}
 
-		@Override
+		//@Override
 		public void run() {
-//			String responseLine;
+			String responseLine;
 			while (!terminate) {
 				if (in != null) {
 					try {
-						communicationController.getClientController().update("< " + in.readLine());
-//						while (in.ready()) {
-//							communicationController.getClientController().update("< " + 
-//									(responseLine = in.readLine()));
-//						}
+						while ((responseLine = in.readLine()) != null) {
+							final String line = responseLine;
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									communicationController.getClientController().update("< " + line);
+								}
+							});
+						}
 					} catch (IOException e) {
-						communicationController.getClientController().update("# Couldn't get Input for the connection");
+						communicationController.getClientController().update("# " + 
+									getName() + ": Couldn't get Input for the connection");
 						terminate();
 					}
 				}
