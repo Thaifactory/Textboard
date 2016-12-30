@@ -19,6 +19,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -71,6 +73,7 @@ public class ClientController {
     void convertToTimestampAction(ActionEvent event) {
     	inputTextArea.setText(inputTextArea.getText() + convert());
     	dateTextField.clear();
+    	inputTextArea.requestFocus();
     }
 
     @FXML
@@ -83,6 +86,7 @@ public class ClientController {
     @FXML
     void sendAction(ActionEvent event) {
     	if(!inputTextArea.getText().isEmpty()) {
+    		print("");
     		Scanner scn = new Scanner(inputTextArea.getText());
     		while (scn.hasNextLine()) {
     			print("> " + scn.nextLine());
@@ -91,12 +95,12 @@ public class ClientController {
         	communicationController.getClient().send(inputTextArea.getText());
         	inputTextArea.clear();
         	inputTextArea.requestFocus();
-        	outputTextArea.setScrollTop(0);
         	checkStatus();
     	} else {
     		Alert alert = new Alert(AlertType.INFORMATION);
     		alert.setContentText("Bitte geben Sie eine Nachricht in das untere Feld ein.");
     		alert.setTitle("Keine Nachricht vorhanden!");
+    		alert.showAndWait();
     	}
     }
     
@@ -105,7 +109,11 @@ public class ClientController {
     }
     
     private void print(String text) {
-    	outputTextArea.setText(outputTextArea.getText() + "\n" + text);
+    	outputTextArea.appendText("\n"+text);
+    	outputTextArea.scrollTopProperty().addListener((obs, oldVal, newVal) -> {
+    		outputTextArea.setScrollTop((double) newVal);
+    	});
+
     }
     
     private void checkStatus() {
