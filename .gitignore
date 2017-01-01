@@ -1,1 +1,7 @@
 /bin/
+
+src/application/Main.class
+
+src/controller/CommunicationController.class
+
+*.class
