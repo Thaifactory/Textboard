@@ -10,18 +10,28 @@ import java.net.UnknownHostException;
 import controller.CommunicationController;
 import javafx.application.Platform;
 
+/**
+ * Handle the connection between Server and this Client.
+ * @author Michael Ratke and Timon Sachweh
+ *
+ */
 public class Client {
 	private CommunicationController communicationController;
 	private Socket clientSocket = null;
 	private PrintWriter out = null;
 	private BufferedReader in = null;
 	private Listener socketListener;
-	private int numberOfListener = 0;
+	private int numberOfListener = 1;
 
 	public Client() {
 		this.clientSocket = new Socket();
 	}
 
+	/**
+	 * Connect the socket of this client with the host.
+	 * @param host Server which will be connect.
+	 * @param port Port of the Server which will be connect.
+	 */
 	public void connect(String host, int port) {
 		try {
 			clientSocket.connect(new InetSocketAddress(host, port));
@@ -31,54 +41,45 @@ public class Client {
 			socketListener.start();
 		} catch (UnknownHostException e) {
 			communicationController.getClientController().update("# Don't know about host: " + host);
-			e.printStackTrace();
 		} catch (IOException e) {
 			communicationController.getClientController().update("# Couldn't get I/O for the connection to: " + host);
-			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Send the message to the host.
+	 * @param str Text or command of the message.
+	 */
 	public void send(String str) {
 		if (clientSocket != null && out != null) {
 			out.println(str);
-			//receive();
-		}
-	}
-	
-	public void receive() {
-		String responseLine;
-		if (clientSocket != null && in != null) {
-			try {
-				while ((responseLine = in.readLine()) != null) {
-					communicationController.getClientController().update("< " + responseLine);
-				}
-			} catch (IOException e) {
-				communicationController.getClientController().update("# Couldn't get Input for the connection");
-			}
 		}
 	}
 
+	/**
+	 * Close the connection with the host.
+	 */
 	public void close() {
+		communicationController.getClientController().update("");
+		
 		if (out != null) {
 			out.close();
-			communicationController.getClientController().update("# Outputstream geschlossen...");
+			communicationController.getClientController().update("# Close outputstream...");
 		}
 		if (in != null) {
 			try {
 				in.close();
-				communicationController.getClientController().update("# Inputstream geschlossen...");
+				communicationController.getClientController().update("# Close inputstream...");
 			} catch (IOException e) {
-				communicationController.getClientController().update("# Socket nicht zu schliessen...");
-				e.printStackTrace();
+				communicationController.getClientController().update("# Cound't close the inputstream...");
 			}
 		}
 		if (clientSocket != null) {
 			try {
 				clientSocket.close();
-				communicationController.getClientController().update("# Socket geschlossen...");
+				communicationController.getClientController().update("# Close socket...");
 			} catch (IOException e) {
-				communicationController.getClientController().update("# Socket nicht zu schliessen...");
-				e.printStackTrace();
+				communicationController.getClientController().update("# Cound't close the socket...");
 			}
 		}
 	}
@@ -95,6 +96,11 @@ public class Client {
 		this.communicationController = controller;
 	}
 
+	/**
+	 * A thread which listen for notifications from the host
+	 * @author Michael Ratke and Timon Sachweh
+	 *
+	 */
 	private class Listener extends Thread {
 		private BufferedReader in;
 		private boolean terminate;
@@ -105,10 +111,13 @@ public class Client {
 			this.terminate = false;
 		}
 
+		/**
+		 * Terminate this thread.
+		 */
 		public void terminate() {
 			terminate = true;
-			communicationController.getClientController().update("# Terminate the Listener " + numberOfListener
-					+ ".\n Please " + "close the Socket and create a new connection!");
+			communicationController.getClientController().update("# Terminate the " + getName()
+					+ ".\n   Please close the Socket and create a new connection!");
 		}
 
 		//@Override
@@ -131,6 +140,8 @@ public class Client {
 									getName() + ": Couldn't get Input for the connection");
 						terminate();
 					}
+				} else {
+					terminate();
 				}
 			}
 		}
