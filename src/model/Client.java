@@ -52,6 +52,7 @@ public class Client {
 	public void send(String str) {
 		if (clientSocket != null && out != null) {
 			out.println(str);
+			if(str.equals("X")) close();
 		}
 	}
 
