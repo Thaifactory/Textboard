@@ -51,13 +51,13 @@ public class ClientController {
     	} else {
     		int port = Integer.parseInt(portTextField.getText());
 
-        	print("# Connect to Port: " + port);
+        	print("\n# Connect to Port: " + port);
         	communicationController.getClient().connect(ipTextField.getText(), port);
         	
         	try {
         		connected = communicationController.getClient().isConnected();
         	} catch(NullPointerException e) {
-        		print("# Socket is closed!");
+        		print("\n# Socket is closed!");
         		connected = false;
         	}
         	print("# Client is connected: " + connected);

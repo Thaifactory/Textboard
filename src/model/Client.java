@@ -34,7 +34,7 @@ public class Client {
 	 */
 	public void connect(String host, int port) {
 		try {
-			clientSocket.connect(new InetSocketAddress(host, port));
+			clientSocket = new Socket(host, port);
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			socketListener = new Listener(in, numberOfListener++);
