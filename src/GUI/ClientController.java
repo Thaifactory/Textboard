@@ -91,6 +91,7 @@ public class ClientController {
     		}
     		scn.close();
         	communicationController.getClient().send(inputTextArea.getText());
+        	if(inputTextArea.getText().equals("X")) connected = false;
         	inputTextArea.clear();
         	inputTextArea.requestFocus();
         	checkStatus();
